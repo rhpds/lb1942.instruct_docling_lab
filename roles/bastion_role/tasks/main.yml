@@ -4,4 +4,3 @@
     name:
     - elyra[all]
     - jupyterlab
-    executable: pip3.11
