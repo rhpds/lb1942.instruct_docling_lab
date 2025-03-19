@@ -1,3 +1,7 @@
 ---
 - name: Install pip packages
-  ansible.builtin.shell: pip install elyra[all] jupyterlab
+  ansible.builtin.pip:
+    name:
+      - elyra[all]
+      - jupyterlab
+  ansible_python_interpreter: /usr/bin/python3
