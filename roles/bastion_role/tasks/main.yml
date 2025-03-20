@@ -32,8 +32,8 @@
   ansible.builtin.debug:
     msg: "{{ elyra_info.stdout_lines }}"
 
-- name: Create a kernel that can be used to run notebook commands inside the virtual environment
-  ansible.builtin.command:
-    cmd: /home/{{ student_name }}/venv/elyra/bin/python -m ipykernel install --user --name=elyra
-  vars:
-    ansible_python_interpreter: /home/{{ student_name }}/venv/elyra/bin/python
+# - name: Create a kernel that can be used to run notebook commands inside the virtual environment
+#   ansible.builtin.command:
+#     cmd: /home/{{ student_name }}/venv/elyra/bin/python -m ipykernel install --user --name=elyra
+#   vars:
+#     ansible_python_interpreter: /home/{{ student_name }}/venv/elyra/bin/python
