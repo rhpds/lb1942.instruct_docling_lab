@@ -16,22 +16,6 @@
     state: latest
     virtualenv: /home/{{ student_name }}/venv/elyra
 
-- name: Install Elyra[all] inside the virtual environment
-  ansible.builtin.pip:
-    name: "elyra[all]"
-    state: latest
-    virtualenv: /home/{{ student_name }}/venv/elyra
-
-- name: Verify Elyra installation
-  ansible.builtin.command:
-    cmd: /home/{{ student_name }}/venv/elyra/bin/pip show elyra
-  register: elyra_info
-  changed_when: false
-
-- name: Display Elyra package information
-  ansible.builtin.debug:
-    msg: "{{ elyra_info.stdout_lines }}"
-
 - name: Install JupyterLab inside the virtual environment
   ansible.builtin.pip:
     name: "jupyterlab"
@@ -47,3 +31,19 @@
 - name: Display JupyterLab package information
   ansible.builtin.debug:
     msg: "{{ jupyterlab_info.stdout_lines }}"
+
+- name: Install Elyra[all] inside the virtual environment
+  ansible.builtin.pip:
+    name: "elyra[all]"
+    state: latest
+    virtualenv: /home/{{ student_name }}/venv/elyra
+
+- name: Verify Elyra installation
+  ansible.builtin.command:
+    cmd: /home/{{ student_name }}/venv/elyra/bin/pip show elyra
+  register: elyra_info
+  changed_when: false
+
+- name: Display Elyra package information
+  ansible.builtin.debug:
+    msg: "{{ elyra_info.stdout_lines }}"
