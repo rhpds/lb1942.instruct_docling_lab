@@ -16,9 +16,9 @@
     state: latest
     virtualenv: /home/{{ student_name }}/venv/elyra
 
-- name: Install Elyra[lab] inside the virtual environment
+- name: Install Elyra[all] inside the virtual environment
   ansible.builtin.pip:
-    name: "elyra[lab]"
+    name: "elyra[all]"
     state: latest
     virtualenv: /home/{{ student_name }}/venv/elyra
 
