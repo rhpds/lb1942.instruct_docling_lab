@@ -1,9 +1,49 @@
 ---
-# - name: Install pip packages
-#   ansible.builtin.shell: pip install elyra[all] jupyterlab
+- name: Ensure Python 3.11 virtual environment module is installed
+  yum:
+    name: python3.11-venv
+    state: present
 
-- name: Ensure the virtual environment        
+- name: Create a virtual environment
+  ansible.builtin.command:
+    cmd: python3.11 -m venv /opt/myenv
+  args:
+    creates: /opt/myenv
+
+- name: Upgrade pip inside the virtual environment
   ansible.builtin.pip:
-    name: elyra[all] jupyterlab
-  vars:
-    ansible_python_interpreter: /usr/bin/python3.11
+    name: pip
+    state: latest
+    virtualenv: /opt/myenv
+
+- name: Install Elyra[lab] inside the virtual environment
+  ansible.builtin.pip:
+    name: "elyra[lab]"
+    state: latest
+    virtualenv: /opt/myenv
+
+- name: Verify Elyra installation
+  ansible.builtin.command:
+    cmd: /opt/myenv/bin/pip show elyra
+  register: elyra_info
+  changed_when: false
+
+- name: Display Elyra package information
+  ansible.builtin.debug:
+    msg: "{{ elyra_info.stdout_lines }}"
+
+- name: Install JupyterLab inside the virtual environment
+  ansible.builtin.pip:
+    name: "jupyterlab"
+    state: latest
+    virtualenv: /opt/myenv
+
+- name: Verify JupyterLab installation
+  ansible.builtin.command:
+    cmd: /opt/myenv/bin/pip show jupyterlab
+  register: jupyterlab_info
+  changed_when: false
+
+- name: Display JupyterLab package information
+  ansible.builtin.debug:
+    msg: "{{ jupyterlab_info.stdout_lines }}"
