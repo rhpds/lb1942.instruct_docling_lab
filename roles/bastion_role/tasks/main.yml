@@ -6,25 +6,25 @@
 
 - name: Create a virtual environment
   ansible.builtin.command:
-    cmd: python3.11 -m venv /opt/myenv
+    cmd: python3.11 -m venv /home/{{ student_user }}/venv/elyra
   args:
-    creates: /opt/myenv
+    creates: /home/{{ student_user }}/venv/elyra
 
 - name: Upgrade pip inside the virtual environment
   ansible.builtin.pip:
     name: pip
     state: latest
-    virtualenv: /opt/myenv
+    virtualenv: /home/{{ student_user }}/venv/elyra
 
 - name: Install Elyra[lab] inside the virtual environment
   ansible.builtin.pip:
     name: "elyra[lab]"
     state: latest
-    virtualenv: /opt/myenv
+    virtualenv: /home/{{ student_user }}/venv/elyra
 
 - name: Verify Elyra installation
   ansible.builtin.command:
-    cmd: /opt/myenv/bin/pip show elyra
+    cmd: /home/{{ student_user }}/venv/elyra/bin/pip show elyra
   register: elyra_info
   changed_when: false
 
@@ -36,11 +36,11 @@
   ansible.builtin.pip:
     name: "jupyterlab"
     state: latest
-    virtualenv: /opt/myenv
+    virtualenv: /home/{{ student_user }}/venv/elyra
 
 - name: Verify JupyterLab installation
   ansible.builtin.command:
-    cmd: /opt/myenv/bin/pip show jupyterlab
+    cmd: /home/{{ student_user }}/venv/elyra/bin/pip show jupyterlab
   register: jupyterlab_info
   changed_when: false
 
