@@ -34,6 +34,6 @@
 
 - name: Create a kernel that can be used to run notebook commands inside the virtual environment
   ansible.builtin.command:
-    cmd: python -m ipykernel install --user --name=elyra
+    cmd: /home/{{ student_name }}/venv/elyra/python -m ipykernel install --user --name=elyra
   vars:
     ansible_python_interpreter: /home/{{ student_name }}/venv/elyra/bin/python
