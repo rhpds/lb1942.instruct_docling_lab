@@ -16,22 +16,6 @@
     state: latest
     virtualenv: /home/{{ student_name }}/venv/elyra
 
-- name: Install JupyterLab inside the virtual environment
-  ansible.builtin.pip:
-    name: "jupyterlab"
-    state: latest
-    virtualenv: /home/{{ student_name }}/venv/elyra
-
-- name: Verify JupyterLab installation
-  ansible.builtin.command:
-    cmd: /home/{{ student_name }}/venv/elyra/bin/pip show jupyterlab
-  register: jupyterlab_info
-  changed_when: false
-
-- name: Display JupyterLab package information
-  ansible.builtin.debug:
-    msg: "{{ jupyterlab_info.stdout_lines }}"
-
 - name: Install Elyra[all] inside the virtual environment
   ansible.builtin.pip:
     name: "elyra[all]"
@@ -47,3 +31,9 @@
 - name: Display Elyra package information
   ansible.builtin.debug:
     msg: "{{ elyra_info.stdout_lines }}"
+
+- name: Create a kernel that can be used to run notebook commands inside the virtual environment
+  ansible.builtin.command:
+    cmd: python -m ipykernel install --user --name=elyra
+  vars:
+    ansible_python_interpreter: /home/{{ student_name }}/venv/elyra/bin/python
