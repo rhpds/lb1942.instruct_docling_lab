@@ -1,0 +1,4 @@
+---
+bootstrap_guid: "{{ guid | default('testguid') }}"
+bootstrap_rh_submit_repo: https://github.com/jhurlocker/elyra_docling_rh_summit
+
