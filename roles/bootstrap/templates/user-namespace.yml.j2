@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  annotations:
+    openshift.io/description: ""
+    openshift.io/display-name: {{ bootstrap_user_name_base }}{{ index }}-lb1192
+    openshift.io/requester: {{ bootstrap_user_name_base }}{{ index }}
+  name: {{ bootstrap_user_name_base }}{{ index }}-lb1192

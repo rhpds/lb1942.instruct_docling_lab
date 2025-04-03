@@ -1,0 +1,13 @@
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: {{ bootstrap_user_name_base }}{{ index }}-1b1192-edit
+  namespace: {{ bootstrap_user_name_base }}{{ index }}-lb1192
+subjects:
+  - apiGroup: rbac.authorization.k8s.io
+    kind: User
+    name: {{ bootstrap_user_name_base }}{{ index }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: edit
