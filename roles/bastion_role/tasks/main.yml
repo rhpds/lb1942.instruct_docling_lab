@@ -1,9 +1,4 @@
 ---
-# - name: Ensure Python 3.11 virtual environment module is installed
-#   yum:
-#     name: python3.11-venv
-#     state: present
-
 - name: Create a virtual environment
   ansible.builtin.command:
     cmd: python3.11 -m venv /home/{{ student_name }}/venv/elyra
@@ -31,9 +26,3 @@
 - name: Display Elyra package information
   ansible.builtin.debug:
     msg: "{{ elyra_info.stdout_lines }}"
-
-# - name: Create a kernel that can be used to run notebook commands inside the virtual environment
-#   ansible.builtin.command:
-#     cmd: /home/{{ student_name }}/venv/elyra/bin/python -m ipykernel install --user --name=elyra
-#   vars:
-#     ansible_python_interpreter: /home/{{ student_name }}/venv/elyra/bin/python
