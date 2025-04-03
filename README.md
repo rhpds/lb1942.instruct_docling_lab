@@ -1,5 +1,3 @@
-# Ansible Collection - lb2255.could_you_be_a_hacker
+# Ansible Collection - lb1942.instruct_docling_lab
 
 Documentation for the collection.
-
-Moving stuff around.
