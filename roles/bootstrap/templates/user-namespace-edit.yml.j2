@@ -1,8 +1,8 @@
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: {{ bootstrap_user_name_base }}{{ index }}-lb1942-edit
-  namespace: {{ bootstrap_user_name_base }}{{ index }}-lb1942
+  name: summit-project-{{ bootstrap_user_name_base }}{{ index }}-edit
+  namespace: summit-project-{{ bootstrap_user_name_base }}{{ index }}
 subjects:
   - apiGroup: rbac.authorization.k8s.io
     kind: User
