@@ -1,8 +1,0 @@
----
-- name: Create user namespaces and edit roles
-  kubernetes.core.k8s:
-    state: present
-    definition: "{{ lookup('template', item) | from_yaml }}"
-  loop:
-  - user-namespace.yml.j2
-  - user-namespace-edit.yml.j2

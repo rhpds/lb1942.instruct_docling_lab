@@ -1,12 +1,13 @@
 ---
 - name: Setup post deploy patches
-  include_tasks: setup_post_deploy_patches.yml
+  include_tasks: setup_global_configuration.yml
 
-- name: Setup user namespaces
-  include_tasks: setup_user_namespaces.yml
+- name: Setup user namespaces resources
+  include_tasks: setup_user_namespace_resources.yml
   loop: "{{ range(0, bootstrap_num_users | int, 1) | list }}"
   loop_control:
     loop_var: n
   vars:
     index: "{{ n | int + 1 }}"
-
+  environment:
+    SUMMIT_PROJECT: summit-project-{{ bootstrap_user_name_base }}{{ n | int + 1 }}
