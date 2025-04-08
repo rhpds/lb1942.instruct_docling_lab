@@ -10,7 +10,7 @@
 - name: Setup Minio
   ansible.builtin.shell: |
     oc apply -k ./components/minio/base
-    export MINIO_API_URL=$(oc get routes -n summit-project -o custom-columns=":spec.host" | grep minio-api)
+    export MINIO_API_URL=$(oc get routes -n $SUMMIT_PROJECT -o custom-columns=":spec.host" | grep minio-api)
     envsubst < components/create-bucket-job/base/create-bucket-job-template.yaml > components/create-bucket-job/base/create-bucket-job.yaml
     oc create configmap -n summit-project model-config-file --from-file=IntroToML_Cert.pdf
     oc apply -k ./components/create-bucket-job/base
