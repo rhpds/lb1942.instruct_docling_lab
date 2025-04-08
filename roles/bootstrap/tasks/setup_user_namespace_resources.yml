@@ -1,4 +1,7 @@
 ---
+- debug:
+    msg: "Environment variable is $SUMMIT_PROJECT"
+
 - name: Create user namespaces and edit roles
   kubernetes.core.k8s:
     state: present
