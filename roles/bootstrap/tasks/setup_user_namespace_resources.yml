@@ -21,6 +21,8 @@
 
 - name: Setup Openshift AI Workbench
   ansible.builtin.shell: |
+    until oc wait --for condition=established crd/datasciencepipelinesapplications.datasciencepipelinesapplications.opendatahub.io; do sleep 2; done
+    until oc wait --for condition=established crd/notebooks.kubeflow.org; do sleep 2; done
     oc apply -f components/datascience-pipelines/secret-dashboard-dspa-secret.yaml
     oc apply -f components/datascience-pipelines/dspa.yaml
     oc apply -k ./components/workbenches/base/
