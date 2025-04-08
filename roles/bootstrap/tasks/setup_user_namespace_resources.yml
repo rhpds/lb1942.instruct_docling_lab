@@ -1,7 +1,4 @@
 ---
-- debug:
-    msg: "Environment variable is $SUMMIT_PROJECT"
-
 - name: Create user namespaces and edit roles
   kubernetes.core.k8s:
     state: present
@@ -19,6 +16,8 @@
     oc apply -k ./components/create-bucket-job/base
   args:
     chdir: ~/elyra_docling_rh_summit
+  environment:
+    SUMMIT_PROJECT: summit-project-{{ bootstrap_user_name_base }}{{ index }}
 
 - name: Setup Openshift AI Workbench
   ansible.builtin.shell: |
@@ -27,6 +26,8 @@
     oc apply -k ./components/workbenches/base/
   args:
     chdir: ~/elyra_docling_rh_summit
+  environment:
+    SUMMIT_PROJECT: summit-project-{{ bootstrap_user_name_base }}{{ index }}
 
 - name: Setup Pipeline triggers
   ansible.builtin.shell: |
@@ -34,3 +35,5 @@
     oc apply -f components/ocp-pipeline-triggers/el-route.yaml
   args:
     chdir: ~/elyra_docling_rh_summit
+  environment:
+    SUMMIT_PROJECT: summit-project-{{ bootstrap_user_name_base }}{{ index }}
