@@ -8,7 +8,7 @@
 
 - name: Set ocp apps url
   ansible.builtin.set_fact:
-    bootstrap_ocp_apps_url: "{{ r_ingress_config.resources[0].spec.host }}"
+    bootstrap_ocp_apps_url: "{{ r_ingress_config.resources[0].spec.domain }}"
 
 - name: Setup post deploy patches
   include_tasks: setup_global_configuration.yml
