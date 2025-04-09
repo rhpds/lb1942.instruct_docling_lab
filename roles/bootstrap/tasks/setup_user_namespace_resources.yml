@@ -29,6 +29,9 @@
   ansible.builtin.shell: |
     oc project $SUMMIT_PROJECT
 
+    until oc wait --for condition=established crd/datasciencepipelinesapplications.datasciencepipelinesapplications.opendatahub.io; do sleep 5; done
+    until oc wait --for condition=established crd/notebooks.kubeflow.org; do sleep 5; done
+
     oc apply -f components/datascience-pipelines/secret-dashboard-dspa-secret.yaml
     envsubst < components/datascience-pipelines/dspa-template.yaml > components/datascience-pipelines/dspa.yaml
     rm -rf components/datascience-pipelines/dspa-template.yaml
