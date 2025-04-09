@@ -1,4 +1,15 @@
 ---
+- name: Retrieve Ingress config
+  kubernetes.core.k8s_info:
+    api_version: config.openshift.io/v1
+    kind: Ingress
+    name: cluster
+  register: r_ingress_config
+
+- name: Set ocp apps url
+  ansible.builtin.set_fact:
+    bootstrap_ocp_apps_url: "{{ r_ingress_config.resources[0].spec.host }}"
+
 - name: Setup post deploy patches
   include_tasks: setup_global_configuration.yml
 
