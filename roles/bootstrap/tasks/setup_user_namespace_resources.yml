@@ -44,6 +44,10 @@
     chdir: ~/elyra_docling_rh_summit
   environment:
     SUMMIT_PROJECT: summit-project-{{ bootstrap_user_name_base }}{{ index }}
+  retries: 60
+  delay: 10
+  register: r_rhoai
+  until: r_rhoai is not failed
 
 - name: Setup Pipeline triggers
   ansible.builtin.shell: |
@@ -56,6 +60,10 @@
   environment:
     SUMMIT_PROJECT: summit-project-{{ bootstrap_user_name_base }}{{ index }}
     OCP_APPS_URL: "{{ bootstrap_ocp_apps_url }}"
+  retries: 60
+  delay: 10
+  register: r_pipelines
+  until: r_pipelines is not failed
 
 - name: Setup Static Python Server for DSP file
   ansible.builtin.shell: |
@@ -69,3 +77,7 @@
   environment:
     SUMMIT_PROJECT: summit-project-{{ bootstrap_user_name_base }}{{ index }}
     OCP_APPS_URL: "{{ bootstrap_ocp_apps_url }}"
+  retries: 60
+  delay: 10
+  register: r_python
+  until: r_python is not failed
