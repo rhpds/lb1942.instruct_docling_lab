@@ -20,6 +20,10 @@
     chdir: ~/elyra_docling_rh_summit
   environment:
     SUMMIT_PROJECT: summit-project-{{ bootstrap_user_name_base }}{{ index }}
+  retries: 60
+  delay: 10
+  register: r_minio
+  until: r_minio is not failed
 
 - name: Setup Openshift AI Workbench
   ansible.builtin.shell: |
