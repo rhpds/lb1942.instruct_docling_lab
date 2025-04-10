@@ -14,7 +14,6 @@
     oc apply -k ./components/minio/base
 
     envsubst < components/create-bucket-job/base/create-bucket-job-template.yaml > components/create-bucket-job/base/create-bucket-job.yaml
-    rm -rf components/create-bucket-job/base/create-bucket-job-template.yaml
     oc create configmap -n ${SUMMIT_PROJECT} model-config-file --from-file=IntroToML_Cert.pdf
     oc apply -k ./components/create-bucket-job/base
   args:
@@ -32,12 +31,10 @@
     oc apply -f components/workbenches/base/custom-notebook.yaml
     oc apply -f components/datascience-pipelines/secret-dashboard-dspa-secret.yaml
     envsubst < components/datascience-pipelines/dspa-template.yaml > components/datascience-pipelines/dspa.yaml
-    rm -rf components/datascience-pipelines/dspa-template.yaml
     oc apply -f components/datascience-pipelines/dspa.yaml
 
     export RHOAI_DASHBOARD=$(oc get routes -n redhat-ods-applications -o custom-columns=":spec.host" | grep rhods-dashboard)
     envsubst < components/workbenches/base/elyra-docling-workbench-template.yaml > components/workbenches/base/elyra-docling-workbench.yaml
-    rm -rf components/workbenches/base/elyra-docling-workbench-template.yaml
     oc apply -k ./components/workbenches/base/
   args:
     chdir: ~/elyra_docling_rh_summit
@@ -49,7 +46,6 @@
     oc project $SUMMIT_PROJECT
 
     envsubst < components/ocp-pipeline-triggers/el-route-template.yaml > components/ocp-pipeline-triggers/el-route.yaml
-    rm -rf components/ocp-pipeline-triggers/task-python-task-template.yaml components/ocp-pipeline-triggers/el-route-template.yaml
     oc apply -k components/ocp-pipeline-triggers/
   args:
     chdir: ~/elyra_docling_rh_summit
@@ -63,7 +59,6 @@
 
     oc new-app quay.io/jhurlocker/static-file-python:latest --name=static-python-dsp
     envsubst < components/static-python/route-template.yaml > components/static-python/route.yaml
-    rm -rf components/static-python/route-template.yaml
     oc apply -f components/static-python/route.yaml
   args:
     chdir: ~/elyra_docling_rh_summit
