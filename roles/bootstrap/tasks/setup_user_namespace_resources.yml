@@ -49,7 +49,7 @@
 - name: Setup Pipeline triggers
   ansible.builtin.shell: |
     oc project $SUMMIT_PROJECT
-OCP
+
     envsubst < components/ocp-pipeline-triggers/el-route-template.yaml > components/ocp-pipeline-triggers/el-route.yaml
     rm -rf components/ocp-pipeline-triggers/task-python-task-template.yaml components/ocp-pipeline-triggers/el-route-template.yaml
     oc apply -k components/ocp-pipeline-triggers/
