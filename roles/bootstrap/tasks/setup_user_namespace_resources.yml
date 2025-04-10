@@ -49,8 +49,7 @@
 - name: Setup Pipeline triggers
   ansible.builtin.shell: |
     oc project $SUMMIT_PROJECT
-
-    export OCP_APPS_URL=$(oc get ingresses.config.openshift.io cluster -o jsonpath='{.spec.domain}')
+OCP
     envsubst < components/ocp-pipeline-triggers/el-route-template.yaml > components/ocp-pipeline-triggers/el-route.yaml
     rm -rf components/ocp-pipeline-triggers/task-python-task-template.yaml components/ocp-pipeline-triggers/el-route-template.yaml
     oc apply -k components/ocp-pipeline-triggers/
@@ -58,6 +57,7 @@
     chdir: ~/elyra_docling_rh_summit
   environment:
     SUMMIT_PROJECT: summit-project-{{ bootstrap_user_name_base }}{{ index }}
+    OCP_APPS_URL: "{{ bootstrap_ocp_apps_url }}"
 
 - name: Setup Static Python Server for DSP file
   ansible.builtin.shell: |
@@ -71,3 +71,4 @@
     chdir: ~/elyra_docling_rh_summit
   environment:
     SUMMIT_PROJECT: summit-project-{{ bootstrap_user_name_base }}{{ index }}
+    OCP_APPS_URL: "{{ bootstrap_ocp_apps_url }}"
