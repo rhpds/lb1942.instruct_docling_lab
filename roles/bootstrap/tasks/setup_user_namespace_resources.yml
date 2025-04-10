@@ -11,8 +11,6 @@
   ansible.builtin.shell: |
     oc project $SUMMIT_PROJECT
 
-    envsubst < components/minio/base/buckets-template.yaml > components/create-bucket-job/base/buckets.yaml
-    rm -rf components/minio/base/buckets-template.yaml
     oc apply -k ./components/minio/base
 
     envsubst < components/create-bucket-job/base/create-bucket-job-template.yaml > components/create-bucket-job/base/create-bucket-job.yaml
