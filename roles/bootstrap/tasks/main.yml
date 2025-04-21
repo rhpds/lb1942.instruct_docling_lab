@@ -20,3 +20,31 @@
     loop_var: n
   vars:
     index: "{{ n | int + 1 }}"
+
+- name: Setup the model project
+  ansible.builtin.shell: |
+    oc project $SUMMIT_PROJECT
+
+    oc apply -k ./components/minio/base
+
+    export MINIO_API_URL=$(oc get routes -n $SUMMIT_PROJECT -o custom-columns=":spec.host" | grep minio-api)
+    envsubst < components/create-bucket-job/base/create-bucket-job-template.yaml > components/create-bucket-job/base/create-bucket-job.yaml
+    oc create configmap -n ${SUMMIT_PROJECT} model-config-file
+    oc apply -k ./components/create-bucket-job/base
+
+    python components/model-server/download-model.py
+
+    python components/model-server/model-folder-upload.py
+
+    oc apply -f components/model-server/granite2b-conn.yaml
+    oc apply -f components/model-server/model-namespace.yaml
+    oc apply -f components/model-server/servingruntimes.yaml
+    oc apply -f components/model-server/inferenceservice.yaml
+  args:
+    chdir: ~/elyra_docling_rh_summit
+  environment:
+    SUMMIT_PROJECT: granite-model-project
+  retries: 60
+  delay: 10
+  register: r_model_project
+  until: r_model_project is not failed

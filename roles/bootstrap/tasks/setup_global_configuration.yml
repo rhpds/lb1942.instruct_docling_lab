@@ -19,3 +19,7 @@
   args:
     chdir: ~/elyra_docling_rh_summit
 
+- name: Create granite model project
+  kubernetes.core.k8s:
+    state: present
+    definition: "{{ lookup('template', 'granite-model-namespace.yml.j2') | from_yaml }}"

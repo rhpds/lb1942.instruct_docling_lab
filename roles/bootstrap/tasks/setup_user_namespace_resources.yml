@@ -6,6 +6,7 @@
   loop:
   - user-namespace.yml.j2
   - user-namespace-edit.yml.j2
+  - granite-model-namespace-edit.yml.j2
 
 - name: Setup Minio
   ansible.builtin.shell: |
@@ -14,7 +15,7 @@
     oc apply -k ./components/minio/base
 
     envsubst < components/create-bucket-job/base/create-bucket-job-template.yaml > components/create-bucket-job/base/create-bucket-job.yaml
-    oc create configmap -n ${SUMMIT_PROJECT} model-config-file --from-file=IntroToML_Cert.pdf
+    oc create configmap -n ${SUMMIT_PROJECT} model-config-file
     oc apply -k ./components/create-bucket-job/base
   args:
     chdir: ~/elyra_docling_rh_summit
@@ -32,8 +33,12 @@
     until oc wait --for condition=established crd/datasciencepipelinesapplications.datasciencepipelinesapplications.opendatahub.io; do sleep 5; done
     until oc wait --for condition=established crd/notebooks.kubeflow.org; do sleep 5; done
 
+    envsubst < components/workbenches/base/env-config-map-template.yaml > components/workbenches/base/env-config-map.yaml
     oc apply -f components/workbenches/base/custom-notebook.yaml
+
+    envsubst < components/datascience-pipelines/secret-dashboard-dspa-secret-template.yaml > components/datascience-pipelines/secret-dashboard-dspa-secret.yaml
     oc apply -f components/datascience-pipelines/secret-dashboard-dspa-secret.yaml
+
     envsubst < components/datascience-pipelines/dspa-template.yaml > components/datascience-pipelines/dspa.yaml
     oc apply -f components/datascience-pipelines/dspa.yaml
 
