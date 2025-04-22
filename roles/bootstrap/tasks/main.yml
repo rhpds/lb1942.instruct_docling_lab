@@ -70,13 +70,6 @@
   until:
   - r_secret.resources | length > 0
 
-- name: Print user details per created user
-  agnosticd_user_info:
-    user: "{{ bootstrap_user_name_base }}{{ index }}"
-    data:
-      model_service_token: "{{ r_secret.resources[0].data.token | b64decode }}"
-  loop: "{{ range(0, bootstrap_num_users | int, 1) | list }}"
-  loop_control:
-    loop_var: n
-  vars:
-    index: "{{ n | int + 1 }}"
+- name: Set model service token secret fact
+  set_fact:
+    bastion_role_model_service_token: "{{ r_secret.resources[0].data.token | b64decode }}"
