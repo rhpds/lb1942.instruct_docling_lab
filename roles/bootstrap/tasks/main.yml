@@ -6,9 +6,22 @@
     name: cluster
   register: r_ingress_config
 
-- name: Set ocp apps url
-  ansible.builtin.set_fact:
-    bootstrap_ocp_apps_url: "{{ r_ingress_config.resources[0].spec.domain }}"
+- name: Setup Openshift AI
+  ansible.builtin.shell: |
+    oc apply -k ./components/openshift-ai/instance/overlays/fast
+  args:
+    chdir: ~/elyra_docling_rh_summit
+
+- name: Setup Openshift AI single serving runtime
+  ansible.builtin.shell: |
+    oc apply -k components/model-server/components-serving
+  args:
+    chdir: ~/elyra_docling_rh_summit
+
+- name: Create granite model project
+  kubernetes.core.k8s:
+    state: present
+    definition: "{{ lookup('template', 'granite-model-namespace.yml.j2') | from_yaml }}"
 
 - name: Clone {{ bootstrap_rh_submit_repo }}
   ansible.builtin.git:
@@ -16,9 +29,6 @@
     dest: ~/elyra_docling_rh_summit
     single_branch: yes
     version: rhpds
-
-- name: Setup post deploy patches
-  include_tasks: setup_global_configuration.yml
 
 - name: Setup user namespaces resources
   include_tasks: setup_user_namespace_resources.yml
