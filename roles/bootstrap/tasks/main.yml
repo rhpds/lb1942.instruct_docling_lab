@@ -40,6 +40,7 @@
     oc apply -k ./components/create-bucket-job/base
 
     python -m pip install huggingface_hub=={{ bootstrap_huggingface_hub_version }}
+    python -m pip install boto3=={{ bootstrap_boto3_version }}
     python components/model-server/download-model.py
     python components/model-server/model-folder-upload.py
 

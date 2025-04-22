@@ -4,3 +4,4 @@ bootstrap_rh_submit_repo: https://github.com/jhurlocker/elyra_docling_rh_summit
 bootstrap_num_users: "{{ num_users | default(0) }}"
 bootstrap_user_name_base: user
 bootstrap_huggingface_hub_version: 0.30.2
+bootstrap_boto3_version: 1.37.38
