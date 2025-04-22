@@ -1,11 +1,4 @@
 ---
-- name: Clone {{ bootstrap_rh_submit_repo }}
-  ansible.builtin.git:
-    repo: "{{ bootstrap_rh_submit_repo }}"
-    dest: ~/elyra_docling_rh_summit
-    single_branch: yes
-    version: rhpds
-
 - name: Setup Openshift AI
   ansible.builtin.shell: |
     oc apply -k ./components/openshift-ai/instance/overlays/fast

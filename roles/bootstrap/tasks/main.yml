@@ -10,6 +10,13 @@
   ansible.builtin.set_fact:
     bootstrap_ocp_apps_url: "{{ r_ingress_config.resources[0].spec.domain }}"
 
+- name: Clone {{ bootstrap_rh_submit_repo }}
+  ansible.builtin.git:
+    repo: "{{ bootstrap_rh_submit_repo }}"
+    dest: ~/elyra_docling_rh_summit
+    single_branch: yes
+    version: rhpds
+
 - name: Setup post deploy patches
   include_tasks: setup_global_configuration.yml
 
@@ -32,8 +39,8 @@
     oc create configmap -n ${SUMMIT_PROJECT} model-config-file
     oc apply -k ./components/create-bucket-job/base
 
+    python -m pip install huggingface_hub=={{ bootstrap_huggingface_hub_version }}
     python components/model-server/download-model.py
-
     python components/model-server/model-folder-upload.py
 
     oc apply -f components/model-server/granite2b-conn.yaml
