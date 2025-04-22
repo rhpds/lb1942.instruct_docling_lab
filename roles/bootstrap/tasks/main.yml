@@ -6,6 +6,13 @@
     name: cluster
   register: r_ingress_config
 
+- name: Clone {{ bootstrap_rh_submit_repo }}
+  ansible.builtin.git:
+    repo: "{{ bootstrap_rh_submit_repo }}"
+    dest: ~/elyra_docling_rh_summit
+    single_branch: yes
+    version: rhpds
+
 - name: Setup Openshift AI
   ansible.builtin.shell: |
     oc apply -k ./components/openshift-ai/instance/overlays/fast
@@ -22,13 +29,6 @@
   kubernetes.core.k8s:
     state: present
     definition: "{{ lookup('template', 'granite-model-namespace.yml.j2') | from_yaml }}"
-
-- name: Clone {{ bootstrap_rh_submit_repo }}
-  ansible.builtin.git:
-    repo: "{{ bootstrap_rh_submit_repo }}"
-    dest: ~/elyra_docling_rh_summit
-    single_branch: yes
-    version: rhpds
 
 - name: Setup user namespaces resources
   include_tasks: setup_user_namespace_resources.yml
