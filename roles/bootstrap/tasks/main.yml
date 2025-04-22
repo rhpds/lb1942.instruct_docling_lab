@@ -57,6 +57,22 @@
   environment:
     SUMMIT_PROJECT: granite-model-project
 
+- name: Wait for minio deployment
+  kubernetes.core.k8s_info:
+    api_version: apps/v1
+    kind: Deployment
+    name: minio
+    namespace: granite-model-project
+  register: r_minio_deployment
+  retries: 60
+  delay: 10
+  until:
+  - r_minio_deployment.resources is defined
+  - r_minio_deployment.resources | length > 0
+  - r_minio_deployment.resources[0].status is defined
+  - r_minio_deployment.resources[0].status.readyReplicas is defined
+  - r_minio_deployment.resources[0].status.readyReplicas > 0
+
 - name: Setup the model project - Install pip dependencies
   ansible.builtin.shell: |
     python -m pip install huggingface_hub=={{ bootstrap_huggingface_hub_version }}
