@@ -56,3 +56,26 @@
   delay: 10
   register: r_model_project
   until: r_model_project is not failed
+
+- name: Get model token secret
+  k8s_info:
+    api_version: v1
+    kind: Secret
+    name: default-name-granite2b-sa
+    namespace: granite-model-project
+  register: r_secret
+  retries: 180
+  delay: 10
+  until:
+  - r_secret.resources | length > 0
+
+- name: Print user details per created user
+  agnosticd_user_info:
+    user: "{{ bootstrap_user_name_base }}{{ index }}"
+    data:
+      model_service_token: "{{ r_secret.resources[0].data.token | b64decode }}"
+  loop: "{{ range(0, bootstrap_num_users | int, 1) | list }}"
+  loop_control:
+    loop_var: n
+  vars:
+    index: "{{ n | int + 1 }}"
