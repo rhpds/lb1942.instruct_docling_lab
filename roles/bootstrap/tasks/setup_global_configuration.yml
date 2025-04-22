@@ -8,7 +8,6 @@
 - name: Setup Openshift AI single serving runtime
   ansible.builtin.shell: |
     oc apply -k components/model-server/components-serving
-    oc apply -f components/serving-runtime/vllm-cpu-runtime-template.yaml
   args:
     chdir: ~/elyra_docling_rh_summit
 
