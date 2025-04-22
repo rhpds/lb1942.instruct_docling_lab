@@ -28,7 +28,7 @@
   vars:
     index: "{{ n | int + 1 }}"
 
-- name: Setup the model project
+- name: Setup the model project - Create bucket job
   ansible.builtin.shell: |
     oc project $SUMMIT_PROJECT
 
@@ -38,12 +38,35 @@
     envsubst < components/create-bucket-job/base/create-bucket-job-template.yaml > components/create-bucket-job/base/create-bucket-job.yaml
     oc create configmap -n ${SUMMIT_PROJECT} model-config-file
     oc apply -k ./components/create-bucket-job/base
+  args:
+    chdir: ~/elyra_docling_rh_summit
+  environment:
+    SUMMIT_PROJECT: granite-model-project
 
+- name: Setup the model project - Install pip dependencies
+  ansible.builtin.shell: |
     python -m pip install huggingface_hub=={{ bootstrap_huggingface_hub_version }}
     python -m pip install boto3=={{ bootstrap_boto3_version }}
-    python components/model-server/download-model.py
-    python components/model-server/model-folder-upload.py
 
+- name: Setup the model project - Download model
+  ansible.builtin.shell: |
+    python components/model-server/download-model.py
+  args:
+    chdir: ~/elyra_docling_rh_summit
+
+- name: Setup the model project - Create bucket job
+  ansible.builtin.shell: |
+    export MINIO_API_URL=$(oc get routes -n $SUMMIT_PROJECT -o custom-columns=":spec.host" | grep minio-api)
+    python components/model-server/model-folder-upload.py
+  args:
+    chdir: ~/elyra_docling_rh_summit
+  retries: 60
+  delay: 10
+  register: r_model_project
+  until: r_model_project is not failed
+
+- name: Setup the model project - Create bucket job
+  ansible.builtin.shell: |
     oc apply -f components/model-server/sa-secret-token.yaml
     oc apply -f components/model-server/granite2b-conn.yaml
     oc apply -f components/model-server/model-namespace.yaml
@@ -51,12 +74,6 @@
     oc apply -f components/model-server/inferenceservice.yaml
   args:
     chdir: ~/elyra_docling_rh_summit
-  environment:
-    SUMMIT_PROJECT: granite-model-project
-  retries: 60
-  delay: 10
-  register: r_model_project
-  until: r_model_project is not failed
 
 - name: Get model token secret
   k8s_info:
