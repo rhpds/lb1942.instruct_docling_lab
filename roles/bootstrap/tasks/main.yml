@@ -99,6 +99,7 @@
 
 - name: Setup the model project - Create granite model resources
   ansible.builtin.shell: |
+    oc project granite-model-project
     oc apply -f components/model-server/sa-secret-token.yaml
     oc apply -f components/model-server/granite2b-conn.yaml
     oc apply -f components/model-server/model-namespace.yaml
