@@ -86,10 +86,8 @@
 
 - name: Setup the model project - Upload model
   ansible.builtin.shell: |
-    export MINIO_API_URL=$(oc get routes -n $SUMMIT_PROJECT -o custom-columns=":spec.host" | grep minio-api)
+    export MINIO_API_URL=$(oc get routes -n granite-model-project -o custom-columns=":spec.host" | grep minio-api)
     python components/model-server/model-folder-upload.py
-  environment:
-    SUMMIT_PROJECT: granite-model-project
   args:
     chdir: ~/elyra_docling_rh_summit
   retries: 60
