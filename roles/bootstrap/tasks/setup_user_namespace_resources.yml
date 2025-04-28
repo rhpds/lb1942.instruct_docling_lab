@@ -26,35 +26,6 @@
   register: r_minio
   until: r_minio is not failed
 
-- name: Setup Openshift AI Workbench
-  ansible.builtin.shell: |
-    oc project $SUMMIT_PROJECT
-
-    until oc wait --for condition=established crd/datasciencepipelinesapplications.datasciencepipelinesapplications.opendatahub.io; do sleep 5; done
-    until oc wait --for condition=established crd/notebooks.kubeflow.org; do sleep 5; done
-
-    export MINIO_API_URL=$(oc get routes -n $SUMMIT_PROJECT -o custom-columns=":spec.host" | grep minio-api)
-    envsubst < components/workbenches/base/env-config-map-template.yaml > components/workbenches/base/env-config-map.yaml
-    oc apply -f components/workbenches/base/custom-notebook.yaml
-
-    envsubst < components/datascience-pipelines/secret-dashboard-dspa-secret-template.yaml > components/datascience-pipelines/secret-dashboard-dspa-secret.yaml
-    oc apply -f components/datascience-pipelines/secret-dashboard-dspa-secret.yaml
-
-    envsubst < components/datascience-pipelines/dspa-template.yaml > components/datascience-pipelines/dspa.yaml
-    oc apply -f components/datascience-pipelines/dspa.yaml
-
-    export RHOAI_DASHBOARD=$(oc get routes -n redhat-ods-applications -o custom-columns=":spec.host" | grep rhods-dashboard)
-    envsubst < components/workbenches/base/elyra-docling-workbench-template.yaml > components/workbenches/base/elyra-docling-workbench.yaml
-    oc apply -k ./components/workbenches/base/
-  args:
-    chdir: ~/elyra_docling_rh_summit
-  environment:
-    SUMMIT_PROJECT: summit-project-{{ bootstrap_user_name_base }}{{ index }}
-  retries: 60
-  delay: 10
-  register: r_rhoai
-  until: r_rhoai is not failed
-
 - name: Setup Pipeline triggers
   ansible.builtin.shell: |
     oc project $SUMMIT_PROJECT
@@ -70,20 +41,3 @@
   delay: 10
   register: r_pipelines
   until: r_pipelines is not failed
-
-- name: Setup Static Python Server for DSP file
-  ansible.builtin.shell: |
-    oc project $SUMMIT_PROJECT
-
-    oc new-app quay.io/jhurlocker/static-file-python:latest --name=static-python-dsp
-    envsubst < components/static-python/route-template.yaml > components/static-python/route.yaml
-    oc apply -f components/static-python/route.yaml
-  args:
-    chdir: ~/elyra_docling_rh_summit
-  environment:
-    SUMMIT_PROJECT: summit-project-{{ bootstrap_user_name_base }}{{ index }}
-    OCP_APPS_URL: "{{ bootstrap_ocp_apps_url }}"
-  retries: 60
-  delay: 10
-  register: r_python
-  until: r_python is not failed
