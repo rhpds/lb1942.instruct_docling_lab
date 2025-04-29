@@ -7,6 +7,7 @@
   - user-namespace.yml.j2
   - user-namespace-edit.yml.j2
   - granite-model-namespace-edit.yml.j2
+  - user-workbench-sa-rb.yml.j2
 
 - name: Setup Minio
   ansible.builtin.shell: |
