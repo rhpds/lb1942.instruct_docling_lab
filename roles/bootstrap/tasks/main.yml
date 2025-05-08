@@ -1,4 +1,20 @@
 ---
+- name: Wait for kserve
+  kubernetes.core.k8s_info:
+    api_version: apps/v1
+    kind: Deployment
+    name: kserve-controller-manager
+    namespace: redhat-ods-applications
+  register: r_kserve_deployment
+  retries: 60
+  delay: 10
+  until:
+  - r_kserve_deployment.resources is defined
+  - r_kserve_deployment.resources | length > 0
+  - r_kserve_deployment.resources[0].status is defined
+  - r_kserve_deployment.resources[0].status.readyReplicas is defined
+  - r_kserve_deployment.resources[0].status.readyReplicas > 0
+
 - name: Retrieve Ingress config
   kubernetes.core.k8s_info:
     api_version: config.openshift.io/v1
