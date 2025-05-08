@@ -3,17 +3,21 @@
   kubernetes.core.k8s_info:
     api_version: apps/v1
     kind: Deployment
-    name: kserve-controller-manager
+    name: "{{ item }}"
     namespace: redhat-ods-applications
-  register: r_kserve_deployment
+  register: r_deployment
   retries: 60
   delay: 10
   until:
-  - r_kserve_deployment.resources is defined
-  - r_kserve_deployment.resources | length > 0
-  - r_kserve_deployment.resources[0].status is defined
-  - r_kserve_deployment.resources[0].status.readyReplicas is defined
-  - r_kserve_deployment.resources[0].status.readyReplicas > 0
+  - r_deployment.resources is defined
+  - r_deployment.resources | length > 0
+  - r_deployment.resources[0].status is defined
+  - r_deployment.resources[0].status.readyReplicas is defined
+  - r_deployment.resources[0].status.readyReplicas > 0
+  loop:
+  - kserve-controller-manager
+  - kueue-controller-manager
+
 
 - name: Retrieve Ingress config
   kubernetes.core.k8s_info:
