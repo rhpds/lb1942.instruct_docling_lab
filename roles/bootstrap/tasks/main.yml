@@ -16,7 +16,7 @@
   - r_deployment.resources[0].status.readyReplicas > 0
   loop:
   - kserve-controller-manager
-  - kueue-controller-manager
+  - kueue-controller-managers
 
 - name: Retrieve Ingress config
   kubernetes.core.k8s_info:
