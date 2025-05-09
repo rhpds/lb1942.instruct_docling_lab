@@ -1,27 +1,4 @@
 ---
-- name: Wait for redhat-ods-applications deployments
-  block:
-  - name: Get list of deployments from redhat-ods-applications
-    shell: oc get deployments -n redhat-ods-applications -o jsonpath='{.items[*].metadata.name}'
-    register: r_deployments
-
-  - name: Check if deployment is ready
-    kubernetes.core.k8s_info:
-      api_version: apps/v1
-      kind: Deployment
-      name: "{{ item }}"
-      namespace: redhat-ods-applications
-    register: r_deployment
-    retries: 60
-    delay: 10
-    until:
-    - r_deployment.resources is defined
-    - r_deployment.resources | length > 0
-    - r_deployment.resources[0].status is defined
-    - r_deployment.resources[0].status.readyReplicas is defined
-    - r_deployment.resources[0].status.readyReplicas > 0
-    loop: "{{ r_deployments.stdout.split() }}"
-
 - name: Retrieve Ingress config
   kubernetes.core.k8s_info:
     api_version: config.openshift.io/v1
@@ -45,6 +22,25 @@
     oc apply -k ./components/openshift-ai/instance/overlays/fast
   args:
     chdir: ~/elyra_docling_rh_summit
+
+- name: Pause
+  ansible.builtin.pause:
+    minutes: 1
+
+- name: Wait for RHOAI
+  kubernetes.core.k8s_info:
+    api_version: datasciencecluster.opendatahub.io/v1
+    kind: DataScienceCluster
+    name: default-dsc
+  register: r_dsc
+  retries: 60
+  delay: 10
+  until:
+  - r_dsc.resources is defined
+  - r_dsc.resources | length > 0
+  - r_dsc.resources[0].status is defined
+  - r_dsc.resources[0].status.phase is defined
+  - r_dsc.resources[0].status.phase == 'Ready'
 
 - name: Setup Openshift AI single serving runtime
   ansible.builtin.shell: |
