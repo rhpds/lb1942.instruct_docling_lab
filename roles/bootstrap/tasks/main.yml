@@ -42,6 +42,13 @@
   - r_dsc.resources[0].status.phase is defined
   - r_dsc.resources[0].status.phase == 'Ready'
 
+- name: Recreate ingress cert of KServe
+  shell: |
+    INGRESS_CERT_SECRET=$(oc get secrets -n openshift-ingress -o json | jq -r '.items[] | select(.type=="kubernetes.io/tls") | .metadata.name' | grep ingress-cert)
+    oc extract secret/$INGRESS_CERT_SECRET -n openshift-ingress --to=ingress-certs --confirm
+    oc create secret generic knative-serving-cert -n istio-system --from-file=ingress-certs/. --dry-run=client -o yaml | oc apply -f -
+    rm -rf ingress-certs
+
 - name: Setup Openshift AI single serving runtime
   ansible.builtin.shell: |
     oc apply -k components/model-server/components-serving
