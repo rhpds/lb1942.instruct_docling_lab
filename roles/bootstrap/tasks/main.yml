@@ -42,6 +42,18 @@
   - r_dsc.resources[0].status.phase is defined
   - r_dsc.resources[0].status.phase == 'Ready'
 
+- name: Wait for Knative Serving Cert Secret
+  kubernetes.core.k8s_info:
+    api_version: v1
+    kind: Secret
+    name: knative-serving-cert
+  register: r_ksc
+  retries: 60
+  delay: 10
+  until:
+  - r_ksc.resources is defined
+  - r_ksc.resources | length > 0
+
 - name: Recreate ingress cert of KServe
   shell: |
     INGRESS_CERT_SECRET=$(oc get secrets -n openshift-ingress -o json | jq -r '.items[] | select(.type=="kubernetes.io/tls") | .metadata.name' | grep ingress-cert)
